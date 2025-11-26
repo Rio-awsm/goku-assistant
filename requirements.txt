@@ -1,0 +1,10 @@
+google-generativeai
+speechrecognition
+pyttsx3
+pyaudio
+psutil
+pyautogui
+keyboard
+python-dotenv
+colorama
+GPUtil
