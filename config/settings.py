@@ -16,8 +16,9 @@ class Settings:
         # API Keys
         self.GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
         
-        # Wake word configuration
-        self.WAKE_WORD = os.getenv('WAKE_WORD', 'hey goku')
+        # Hotkey configuration (Shift+Space double press)
+        self.ACTIVATION_HOTKEY = 'shift+space'
+        self.DOUBLE_PRESS_WINDOW = float(os.getenv('DOUBLE_PRESS_WINDOW', '0.5'))  # seconds
         
         # Voice settings
         self.VOICE_RATE = int(os.getenv('VOICE_RATE', '180'))

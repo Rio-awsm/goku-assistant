@@ -1,10 +1,11 @@
 # 🐉 Goku Voice Assistant
 
-A powerful AI-powered voice assistant for Windows that responds to voice commands and automates tasks using Google Gemini AI.
+A powerful AI-powered voice assistant for Windows that responds to hotkey activation and automates tasks using Google Gemini AI.
 
 ## ✨ Features
 
-- **Voice Activation**: Wake word detection ("Hey Goku")
+- **Hotkey Activation**: Press **Shift+Space twice** to activate
+- **Voice Responses**: Goku always responds with natural speech
 - **Natural Language Understanding**: Powered by Google Gemini AI
 - **Voice Input/Output**: Speak to Goku and hear responses
 - **Dynamic Command Execution**: No hardcoded if-else chains
@@ -57,9 +58,9 @@ Create a `.env` file in the project root:
 
 ```env
 GEMINI_API_KEY=your_gemini_api_key_here
-WAKE_WORD=hey goku
 VOICE_RATE=180
 VOICE_VOLUME=0.9
+DOUBLE_PRESS_WINDOW=0.5
 ```
 
 ### 5. Create Required Directories
@@ -76,37 +77,46 @@ The following directories will be created automatically:
 python src/main.py
 ```
 
+Or simply double-click: **`run_goku.bat`**
+
+### Activation Method
+
+1. **Press Shift+Space twice quickly** (within 0.5 seconds)
+2. Goku will say: *"I'm listening"*
+3. Speak your command
+4. Goku will process and respond with voice
+
 ### Voice Commands Examples
 
 **General Conversation:**
-- "Hey Goku, are you up?"
-- "Hey Goku, how are you?"
+- Press Shift+Space twice → "How are you?"
+- Press Shift+Space twice → "What can you do?"
 
 **Web Browsing:**
-- "Hey Goku, open my browser"
-- "Hey Goku, search for Python tutorials"
-- "Hey Goku, open YouTube"
-- "Hey Goku, go to GitHub.com"
+- "Open my browser"
+- "Search for Python tutorials"
+- "Open YouTube"
+- "Go to GitHub.com"
 
 **Media:**
-- "Hey Goku, play Linkin Park on YouTube"
-- "Hey Goku, search for cooking recipes on YouTube"
-- "Hey Goku, play some jazz music"
+- "Play Linkin Park on YouTube"
+- "Search for cooking recipes on YouTube"
+- "Play some jazz music"
 
 **Applications:**
-- "Hey Goku, open Notepad"
-- "Hey Goku, launch Calculator"
-- "Hey Goku, open Visual Studio Code"
+- "Open Notepad"
+- "Launch Calculator"
+- "Open Visual Studio Code"
 
 **System Information:**
-- "Hey Goku, what's my CPU usage?"
-- "Hey Goku, show me system stats"
-- "Hey Goku, how much storage do I have?"
+- "What's my CPU usage?"
+- "Show me system stats"
+- "How much storage do I have?"
 
 **File Management:**
-- "Hey Goku, create a folder called Projects"
-- "Hey Goku, make a file named test.txt"
-- "Hey Goku, take a note: Buy groceries tomorrow"
+- "Create a folder called Projects"
+- "Make a file named test.txt"
+- "Take a note: Buy groceries tomorrow"
 
 ## 🔧 Auto-Start Setup
 
@@ -117,21 +127,19 @@ To make Goku start automatically when Windows boots:
    startup.bat
    ```
 
-2. Or manually add to startup:
-   - Press `Win + R`
-   - Type `shell:startup`
-   - Create a shortcut to `src/main.py`
+2. Goku will run silently in the background
+3. Press **Shift+Space twice** anytime to activate
 
 ## 📁 Project Structure
 
 ```
 goku-assistant/
 ├── src/
-│   ├── main.py              # Entry point
+│   ├── main.py              # Entry point with hotkey handler
 │   ├── voice_input.py       # Speech recognition
 │   ├── voice_output.py      # Text-to-speech
 │   ├── ai_brain.py          # Gemini AI integration
-│   ├── command_executor.py  # Command execution
+│   ├── command_executor.py  # Command execution with voice
 │   └── system_info.py       # System stats
 ├── config/
 │   └── settings.py          # Configuration
@@ -139,6 +147,7 @@ goku-assistant/
 ├── data/                    # Notes and data
 ├── requirements.txt         # Dependencies
 ├── startup.bat             # Auto-start script
+├── run_goku.bat            # Easy run script
 ├── .env                    # Environment variables
 └── README.md              # This file
 ```
@@ -161,11 +170,11 @@ goku-assistant/
 
 ## 🛠️ Customization
 
-### Change Wake Word
+### Change Hotkey Double-Press Timing
 
 Edit `.env` file:
 ```env
-WAKE_WORD=hey jarvis
+DOUBLE_PRESS_WINDOW=0.5    # Time window in seconds
 ```
 
 ### Adjust Voice Settings
@@ -188,6 +197,11 @@ self.app_paths = {
 
 ## 🔍 Troubleshooting
 
+### Hotkey Not Working
+1. Run the script as Administrator
+2. Check if another program is using Shift+Space
+3. Try restarting the script
+
 ### Microphone Not Working
 1. Check Windows microphone permissions
 2. Verify microphone is set as default input device
@@ -207,6 +221,14 @@ https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
 2. Reduce background noise
 3. Check microphone input level in Windows settings
 
+### Keyboard Module Requires Admin Rights
+If you see permission errors, run Command Prompt as Administrator:
+```bash
+Right-click Command Prompt → Run as Administrator
+cd path\to\goku-assistant
+python src\main.py
+```
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
@@ -220,6 +242,7 @@ This project is licensed under the MIT License.
 - Google Gemini AI for natural language understanding
 - SpeechRecognition library for voice input
 - pyttsx3 for text-to-speech
+- keyboard library for hotkey detection
 - All other open-source libraries used
 
 ## 📧 Support
@@ -230,4 +253,4 @@ For issues, questions, or suggestions, please open an issue on GitHub.
 
 **Made with ❤️ by [Your Name]**
 
-🐉 *"With great power comes great responsibility"* - Use Goku wisely!
+🐉 *Press Shift+Space twice and command Goku!*

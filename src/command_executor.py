@@ -10,8 +10,9 @@ from pathlib import Path
 from system_info import SystemInfo
 
 class CommandExecutor:
-    def __init__(self):
+    def __init__(self, voice_output):
         self.system_info = SystemInfo()
+        self.voice_output = voice_output  # Voice output instance for speaking
         self.notes_file = Path("data/notes.txt")
         self.notes_file.parent.mkdir(exist_ok=True)
         
@@ -64,9 +65,16 @@ class CommandExecutor:
             handler = handlers.get(action, self._unknown)
             result = handler(params)
             
+            # Determine what to say
+            if result["success"]:
+                # Use custom message if provided, otherwise use AI response
+                final_message = result.get("message", response)
+            else:
+                final_message = result.get("message", "Unknown error")
+            
             return {
                 "success": result["success"],
-                "message": response if result["success"] else result.get("message", "Unknown error")
+                "message": final_message
             }
             
         except Exception as e:
@@ -78,14 +86,14 @@ class CommandExecutor:
     def _open_browser(self, params):
         """Open default web browser"""
         webbrowser.open("about:blank")
-        return {"success": True}
+        return {"success": True, "message": "Opening your browser"}
     
     def _search_web(self, params):
         """Search Google"""
         query = params.get("query", "")
         search_url = f"https://www.google.com/search?q={query.replace(' ', '+')}"
         webbrowser.open(search_url)
-        return {"success": True}
+        return {"success": True, "message": f"Searching for {query} on Google"}
     
     def _open_app(self, params):
         """Launch application"""
@@ -95,14 +103,14 @@ class CommandExecutor:
         if app_name in self.app_paths:
             try:
                 subprocess.Popen(self.app_paths[app_name])
-                return {"success": True}
+                return {"success": True, "message": f"Opening {app_name}"}
             except:
                 pass
         
         # Try to open by name
         try:
             subprocess.Popen(app_name)
-            return {"success": True}
+            return {"success": True, "message": f"Opening {app_name}"}
         except:
             return {"success": False, "message": f"Could not find application: {app_name}"}
     
@@ -112,31 +120,31 @@ class CommandExecutor:
         if not url.startswith("http"):
             url = "https://" + url
         webbrowser.open(url)
-        return {"success": True}
+        return {"success": True, "message": f"Opening {url}"}
     
     def _play_youtube(self, params):
         """Play video on YouTube"""
         query = params.get("query", "")
         youtube_url = f"https://www.youtube.com/results?search_query={query.replace(' ', '+')}"
         webbrowser.open(youtube_url)
-        return {"success": True}
+        return {"success": True, "message": f"Playing {query} on YouTube"}
     
     def _play_music(self, params):
         """Play music on YouTube Music"""
         query = params.get("query", "")
         music_url = f"https://music.youtube.com/search?q={query.replace(' ', '+')}"
         webbrowser.open(music_url)
-        return {"success": True}
+        return {"success": True, "message": f"Playing {query} on YouTube Music"}
     
     def _system_stats(self, params):
         """Get system statistics"""
         stats = self.system_info.get_all_stats()
         
-        # Format response
+        # Format response for voice
         message = (
-            f"System stats: CPU usage is {stats['cpu']}%, "
-            f"RAM usage is {stats['memory']}%, "
-            f"Available storage is {stats['disk_free']} GB out of {stats['disk_total']} GB"
+            f"Your CPU usage is {stats['cpu']} percent. "
+            f"RAM usage is {stats['memory']} percent. "
+            f"You have {stats['disk_free']} gigabytes free out of {stats['disk_total']} gigabytes total storage."
         )
         
         return {"success": True, "message": message}
@@ -146,9 +154,9 @@ class CommandExecutor:
         path = params.get("path", "")
         try:
             Path(path).mkdir(parents=True, exist_ok=True)
-            return {"success": True}
+            return {"success": True, "message": f"Created folder {path}"}
         except Exception as e:
-            return {"success": False, "message": str(e)}
+            return {"success": False, "message": f"Could not create folder: {str(e)}"}
     
     def _create_file(self, params):
         """Create a file"""
@@ -157,18 +165,18 @@ class CommandExecutor:
         try:
             Path(path).parent.mkdir(parents=True, exist_ok=True)
             Path(path).write_text(content)
-            return {"success": True}
+            return {"success": True, "message": f"Created file {path}"}
         except Exception as e:
-            return {"success": False, "message": str(e)}
+            return {"success": False, "message": f"Could not create file: {str(e)}"}
     
     def _open_file(self, params):
         """Open file in default application"""
         path = params.get("path", "")
         try:
             os.startfile(path)
-            return {"success": True}
+            return {"success": True, "message": f"Opening {path}"}
         except Exception as e:
-            return {"success": False, "message": str(e)}
+            return {"success": False, "message": f"Could not open file: {str(e)}"}
     
     def _take_note(self, params):
         """Save a note to notes file"""
@@ -178,9 +186,9 @@ class CommandExecutor:
                 from datetime import datetime
                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 f.write(f"[{timestamp}] {note}\n")
-            return {"success": True}
+            return {"success": True, "message": f"Note saved: {note}"}
         except Exception as e:
-            return {"success": False, "message": str(e)}
+            return {"success": False, "message": f"Could not save note: {str(e)}"}
     
     def _conversation(self, params):
         """Just conversation, no action needed"""
